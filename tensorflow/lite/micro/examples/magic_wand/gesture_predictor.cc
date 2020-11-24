@@ -17,6 +17,8 @@ limitations under the License.
 
 #include "tensorflow/lite/micro/examples/magic_wand/constants.h"
 
+#include <stdio.h>
+
 namespace {
 // State for the averaging algorithm we're using.
 float prediction_history[kGestureCount][kPredictionHistoryLength] = {};
@@ -31,6 +33,7 @@ int PredictGesture(float* output) {
   for (int i = 0; i < kGestureCount; ++i) {
     prediction_history[i][prediction_history_index] = output[i];
   }
+  printf("W: %d, O: %d, S: %d, U:%d\n", (int)(output[0]*100),  (int)(output[1]*100),  (int)(output[2]*100),  (int)(output[3]*100));
   // Figure out which slot to put the next predictions into.
   ++prediction_history_index;
   if (prediction_history_index >= kPredictionHistoryLength) {

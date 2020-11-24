@@ -48,51 +48,41 @@ TfLiteStatus SetupAccelerometer(tflite::ErrorReporter* error_reporter) {
 bool ReadAccelerometer(tflite::ErrorReporter* error_reporter, float* input,
                        int length) {
   int rc;
-  struct sensor_value accel[3];
+  struct sensor_value accel;
   int samples_count;
 
-  rc = sensor_sample_fetch(sensor);
-  if (rc < 0) {
-    TF_LITE_REPORT_ERROR(error_reporter, "Fetch failed\n");
-    return false;
-  }
-  // skip if there is no data
-  if (!rc) {
-    return false;
-  }
+  static int entrance_count = 0;
+  printf("Read accelerometer data cycle %d\n", entrance_count++);
 
-  samples_count = rc;
+  samples_count = length;
   for (int i = 0; i < samples_count; i++) {
-    rc = sensor_channel_get(sensor, SENSOR_CHAN_ACCEL_XYZ, accel);
+    rc = sensor_sample_fetch(sensor);
+    if (rc < 0) {
+      TF_LITE_REPORT_ERROR(error_reporter, "Fetch failed\n");
+      return false;
+    }
+    rc = sensor_channel_get(sensor, SENSOR_CHAN_ACCEL_X, &accel);
     if (rc < 0) {
       TF_LITE_REPORT_ERROR(error_reporter, "ERROR: Update failed: %d\n", rc);
       return false;
     }
-    bufx[begin_index] = (float)sensor_value_to_double(&accel[0]);
-    bufy[begin_index] = (float)sensor_value_to_double(&accel[1]);
-    bufz[begin_index] = (float)sensor_value_to_double(&accel[2]);
-    begin_index++;
-    if (begin_index >= BUFLEN) begin_index = 0;
-  }
-
-  if (initial && begin_index >= 100) {
-    initial = false;
-  }
-
-  if (initial) {
-    return false;
-  }
-
-  int sample = 0;
-  for (int i = 0; i < (length - 3); i += 3) {
-    int ring_index = begin_index + sample - length / 3;
-    if (ring_index < 0) {
-      ring_index += BUFLEN;
+    input[i++] = (float)sensor_value_to_double(&accel) * 100;
+    rc = sensor_channel_get(sensor, SENSOR_CHAN_ACCEL_Y, &accel);
+    if (rc < 0) {
+      TF_LITE_REPORT_ERROR(error_reporter, "ERROR: Update failed: %d\n", rc);
+      return false;
     }
-    input[i] = bufx[ring_index];
-    input[i + 1] = bufy[ring_index];
-    input[i + 2] = bufz[ring_index];
-    sample++;
+    input[i++] = (float)sensor_value_to_double(&accel) * 100;
+    rc = sensor_channel_get(sensor, SENSOR_CHAN_ACCEL_Z, &accel);
+    if (rc < 0) {
+      TF_LITE_REPORT_ERROR(error_reporter, "ERROR: Update failed: %d\n", rc);
+      return false;
+    }
+    input[i++] = (float)sensor_value_to_double(&accel) * 100;
+    printf("X: %d, Y: %d, Z: %d\n", (int)(input[i-3]*100), (int)(input[i-2]*100), (int)(input[i-1]*100));
+    
+    k_usleep(40000); // 25 Hz
   }
+
   return true;
 }

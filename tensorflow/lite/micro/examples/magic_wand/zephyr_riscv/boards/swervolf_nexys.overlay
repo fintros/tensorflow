@@ -14,11 +14,11 @@ limitations under the License.
 ==============================================================================*/
 
 &spi1 {
-    status = "okay";
+    status = "disabled";
     adxl362@0 {
         compatible = "adi,adxl362";
         label = "ADXL362";
-        spi-max-frequency = <1000000>;
+	spi-max-frequency = <4000000>;
         reg = <0>;
         status = "okay";
     };

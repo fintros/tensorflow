@@ -12,6 +12,8 @@ tensorflow/lite/micro/examples/magic_wand/main_functions.cc \
 tensorflow/lite/micro/examples/magic_wand/magic_wand_model_data.cc \
 tensorflow/lite/micro/examples/magic_wand/gesture_predictor.cc \
 tensorflow/lite/micro/examples/magic_wand/output_handler.cc \
+tensorflow/lite/micro/examples/magic_wand/slope_micro_features_data.cc \
+tensorflow/lite/micro/examples/magic_wand/ring_micro_features_data.cc \
 boards/litex_vexriscv.overlay \
 prj.conf
 
@@ -43,6 +45,8 @@ tensorflow/lite/micro/examples/magic_wand/main_functions.cc \
 tensorflow/lite/micro/examples/magic_wand/magic_wand_model_data.cc \
 tensorflow/lite/micro/examples/magic_wand/gesture_predictor.cc \
 tensorflow/lite/micro/examples/magic_wand/output_handler.cc \
+tensorflow/lite/micro/examples/magic_wand/slope_micro_features_data.cc \
+tensorflow/lite/micro/examples/magic_wand/ring_micro_features_data.cc \
 boards/swervolf_nexys.overlay \
 prj.conf
 
